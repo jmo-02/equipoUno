@@ -96,7 +96,7 @@ bash
 git clone <repository-url>
 Sincronizar dependencias Gradle:
 ```
-``` kotlin
+```
 // Dependencias principales en build.gradle
 implementation "androidx.room:room-runtime:2.5.0"
 implementation "androidx.biometric:biometric:1.1.0"
@@ -216,7 +216,7 @@ Características Técnicas
 Arquitectura
 Patrón: MVVM (Model-View-ViewModel)
 
-Persistencia: Room Database con SQLite
+Persistencia: Room Database 
 
 Biometría: Android Biometric API
 
@@ -241,4 +241,4 @@ Responsive para diferentes densidades de pantalla
 <div align="center">
 © 2025 Widget Inventory - Facultad de Ingeniería de Sistemas y Computación
 
-</div> ```
+</div> 
