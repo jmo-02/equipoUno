@@ -12,7 +12,6 @@ Aplicación <strong>Android profesional</strong> para <strong>gestión de invent
 <img alt="Android" src="https://img.shields.io/badge/Android-Studio-green?style=for-the-badge&logo=android" />
 <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-1.8%2B-purple?style=for-the-badge&logo=kotlin" />
 <img alt="Supabase" src="https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white" />
-
 <img alt="License" src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" />
 
 ---
