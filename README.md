@@ -11,14 +11,15 @@ Aplicación <strong>Android profesional</strong> para <strong>gestión de invent
 <!-- Badges -->
 <img alt="Android" src="https://img.shields.io/badge/Android-Studio-green?style=for-the-badge&logo=android" />
 <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-1.8%2B-purple?style=for-the-badge&logo=kotlin" />
-<img alt="Supabase" src="https://img.shields.io/badge/Supabase-181818?style=for-the-badge&logo=supabase&logoColor=3FCF8E" />
+<img alt="Supabase" src="https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white" />
+
 <img alt="License" src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" />
 
 ---
 
-📦 <strong>Versión actual:</strong> 1.0.0  
+ <strong>Versión actual:</strong> 1.0.0  
 
-## 👨‍💻 Autores y Colaboradores
+##  Autores y Colaboradores
 
 | Rol | Nombre | Descripción |
 |------|---------|-------------|
@@ -112,19 +113,19 @@ Objetivo: Generar widget interactivo para acceso rápido al inventario
 
 Criterios implementados:
 
-✅ Widget con fondo negro transparente (#CC000000) y bordes redondeados
+ Widget con fondo negro transparente (#CC000000) y bordes redondeados
 
-✅ Logo de la aplicación y texto "Inventory" en naranja (#e7522e)
+ Logo de la aplicación y texto "Inventory" en naranja (#e7522e)
 
-✅ Texto "¿Cuánto tengo de inventario?" en blanco
+ Texto "¿Cuánto tengo de inventario?" en blanco
 
-✅ Zona interactiva para mostrar/ocultar saldo con ícono de ojo
+ Zona interactiva para mostrar/ocultar saldo con ícono de ojo
 
-✅ Cálculo automático del saldo total del inventario
+ Cálculo automático del saldo total del inventario
 
-✅ Formato de saldo con separadores de miles (3.326.000,00)
+ Formato de saldo con separadores de miles (3.326.000,00)
 
-✅ Navegación a ventana de Login desde widget
+ Navegación a ventana de Login desde widget
 
 HU 2.0: Ventana Login
 Actor: App
@@ -132,17 +133,17 @@ Objetivo: Sistema de autenticación biométrica para acceso seguro
 
 Criterios implementados:
 
-✅ Interfaz sin toolbar con fondo gris oscuro
+ Interfaz sin toolbar con fondo gris oscuro
 
-✅ Imagen alusiva al inventario y título "Inventory"
+ Imagen alusiva al inventario y título "Inventory"
 
-✅ Autenticación con huella digital mediante Lottie animations
+ Autenticación con huella digital mediante Lottie animations
 
-✅ Ventana emergente de autenticación biométrica
+ Ventana emergente de autenticación biométrica
 
-✅ Manejo de sesiones con SharedPreferences
+ Manejo de sesiones con SharedPreferences
 
-✅ Ícono personalizado para la aplicación
+ Ícono personalizado para la aplicación
 
 HU 3.0: Ventana Home Inventario
 Actor: Usuario
@@ -150,19 +151,19 @@ Objetivo: Visualización completa de productos en inventario
 
 Criterios implementados:
 
-✅ Persistencia de sesión con SharedPreferences
+ Persistencia de sesión con SharedPreferences
 
-✅ Toolbar gris (#424242) con título "Inventario"
+ Toolbar gris (#424242) con título "Inventario"
 
-✅ Ícono de cerrar sesión funcional
+ Ícono de cerrar sesión funcional
 
-✅ Lista de productos con cards blancos y bordes redondeados
+ Lista de productos con cards blancos y bordes redondeados
 
-✅ Progress circular naranja durante carga
+ Progress circular naranja durante carga
 
-✅ FAB naranja para agregar productos
+ FAB naranja para agregar productos
 
-✅ Navegación a detalles del producto
+ Navegación a detalles del producto
 
 HU 4.0: Ventana Agregar Producto
 Actor: Usuario
@@ -170,15 +171,15 @@ Objetivo: Adición de nuevos productos al inventario
 
 Criterios implementados:
 
-✅ Formulario con campos validados (código, nombre, precio, cantidad)
+ Formulario con campos validados (código, nombre, precio, cantidad)
 
-✅ Text fields con hints animados y validación en tiempo real
+ Text fields con hints animados y validación en tiempo real
 
-✅ Botón guardar que se habilita solo con todos los campos completos
+ Botón guardar que se habilita solo con todos los campos completos
 
-✅ Persistencia en Room Database
+ Persistencia en Room Database
 
-✅ Actualización automática de la lista principal
+ Actualización automática de la lista principal
 
 HU 5.0: Ventana Detalle del Producto
 Actor: Usuario
@@ -186,15 +187,15 @@ Objetivo: Visualización detallada y gestión de productos individuales
 
 Criterios implementados:
 
-✅ Tarjeta informativa con todos los datos del producto
+ Tarjeta informativa con todos los datos del producto
 
-✅ Cálculo automático del total (precio × cantidad)
+ Cálculo automático del total (precio × cantidad)
 
-✅ Diálogo de confirmación para eliminación
+ Diálogo de confirmación para eliminación
 
-✅ FAB para edición del producto
+ FAB para edición del producto
 
-✅ Actualización en tiempo real del widget
+ Actualización en tiempo real del widget
 
 HU 6.0: Ventana Editar Producto
 Actor: Usuario
@@ -202,15 +203,15 @@ Objetivo: Modificación de productos existentes en el inventario
 
 Criterios implementados:
 
-✅ Formulario pre-cargado con datos actuales
+ Formulario pre-cargado con datos actuales
 
-✅ ID del producto no editable
+ ID del producto no editable
 
-✅ Validación de campos obligatorios
+ Validación de campos obligatorios
 
-✅ Botón editar que se habilita solo con datos válidos
+ Botón editar que se habilita solo con datos válidos
 
-✅ Actualización inmediata en base de datos y vistas
+ Actualización inmediata en base de datos y vistas
 ```
 Características Técnicas
 Arquitectura
