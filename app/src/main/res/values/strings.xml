@@ -1,7 +1,15 @@
 <resources>
     <string name="app_name">miniProyecto1</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <!-- Tus strings existentes -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="tituloInventario">Inventario</string>
     <string name="agregar_producto">Agregar producto</string>
+
+    <!-- Widget específicos -->
+    <string name="widget_title_inventory">Inventory</string>
+    <string name="inv_logo_desc">Logo Inventory</string>
+    <string name="inv_toggle_eye_desc">Mostrar u ocultar saldo</string>
+    <string name="inv_manage_icon_desc">Gestionar inventario</string>
+    <string name="inv_manage_text">Gestionar inventario</string>
+    <string name="inv_question">¿Cuánto tengo de inventario?</string>
 </resources>
