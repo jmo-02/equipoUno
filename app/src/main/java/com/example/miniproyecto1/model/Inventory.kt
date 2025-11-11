@@ -8,10 +8,12 @@ import androidx.room.PrimaryKey
 data class Inventory(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-//    val codigo: Int,
+
+    val code: Int,
     val name: String,
-    val price: Double,
+    val price: Int,
     val quantity: Int
 )
+
 
 
