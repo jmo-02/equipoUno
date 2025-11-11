@@ -8,29 +8,32 @@ import androidx.lifecycle.viewModelScope
 import com.example.miniproyecto1.model.Inventory
 import com.example.miniproyecto1.repository.InventoryRepository
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
 
 class InventoryViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository = InventoryRepository(application.applicationContext)
 
-    // Lista de inventario observable por la UI
     private val _listInventory = MutableLiveData<MutableList<Inventory>>()
     val listInventory: LiveData<MutableList<Inventory>> get() = _listInventory
 
-    // Estado de progreso (para mostrar spinners o loading)
     private val _progressState = MutableLiveData(false)
     val progressState: LiveData<Boolean> get() = _progressState
 
     // --- CRUD ---
 
-    fun saveInventory(inventory: Inventory) {
-        viewModelScope.launch {
-            _progressState.value = true
+    suspend fun saveInventory(inventory: Inventory): Boolean {
+        _progressState.value = true
+        return withContext(Dispatchers.IO) {
             try {
-                repository.saveInventory(inventory)
-                getListInventory() // recarga la lista después de guardar
+                val result = repository.saveInventory(inventory)
+                if (result) {
+                    _listInventory.postValue(repository.getListInventory())
+                }
+                result
             } finally {
-                _progressState.value = false
+                _progressState.postValue(false)
             }
         }
     }
@@ -51,7 +54,7 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
             _progressState.value = true
             try {
                 repository.deleteInventory(inventory)
-                getListInventory() // recarga lista tras eliminar
+                getListInventory()
             } finally {
                 _progressState.value = false
             }
@@ -63,7 +66,7 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
             _progressState.value = true
             try {
                 repository.updateInventory(inventory)
-                getListInventory() // recarga lista tras actualizar
+                getListInventory()
             } finally {
                 _progressState.value = false
             }

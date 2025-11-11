@@ -1,9 +1,10 @@
 package com.example.miniproyecto1.repository
 
 import android.content.Context
-import com.example.miniproyecto1.model.Inventory
+import android.database.sqlite.SQLiteConstraintException
 import com.example.miniproyecto1.data.InventoryDB
 import com.example.miniproyecto1.data.InventoryDao
+import com.example.miniproyecto1.model.Inventory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -11,15 +12,27 @@ class InventoryRepository(context: Context) {
 
     private val inventoryDao: InventoryDao = InventoryDB.getDatabase(context).inventoryDao()
 
-    suspend fun saveInventory(inventory: Inventory) {
-        withContext(Dispatchers.IO) {
-            inventoryDao.insertItem(inventory)
+    /**
+     * Guarda un producto en la base de datos.
+     * Retorna true si se guarda correctamente, false si el código ya existe o hay error.
+     */
+    suspend fun saveInventory(inventory: Inventory): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                inventoryDao.insertItem(inventory)
+                true
+            } catch (e: SQLiteConstraintException) {
+                // Error por duplicidad de 'code' (índice único)
+                false
+            } catch (e: Exception) {
+                // Cualquier otro error general
+                false
+            }
         }
     }
 
     suspend fun getListInventory(): MutableList<Inventory> {
         return withContext(Dispatchers.IO) {
-            // Puedes retornar una lista mutable desde la BD
             inventoryDao.getAllItemsList().toMutableList()
         }
     }

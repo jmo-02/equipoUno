@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Enfocado -->
+    <item android:color="@color/white" android:state_focused="true" />
+    <!-- Activado -->
+    <item android:color="@color/white" android:state_activated="true" />
+    <!-- Deshabilitado -->
+    <item android:color="@color/gray_toolbar" android:state_enabled="false" />
+    <!-- Normal -->
+    <item android:color="@color/gray_toolbar" />
+</selector>

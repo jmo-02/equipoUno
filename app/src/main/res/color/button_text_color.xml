@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Texto blanco y bold cuando está habilitado -->
+    <item android:state_enabled="true" android:color="@color/white" />
+    <!-- Texto gris claro cuando está deshabilitado -->
+    <item android:color="#BDBDBD" />
+</selector>

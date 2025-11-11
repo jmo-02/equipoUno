@@ -17,7 +17,7 @@
         tools:context=".view.fragment.AddItemFragment">
 
 
-        <!-- 🔹 Barra superior -->
+        <!-- Barra superior -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
             android:layout_width="0dp"
@@ -32,7 +32,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- 🔹 Campo: Código -->
+        <!-- Campo: Código -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilCode"
             android:layout_width="0dp"
@@ -41,8 +41,7 @@
             android:hint="Código producto"
             android:textColorHint="@color/white"
             app:hintTextColor="@color/white"
-            app:boxStrokeColor="@color/white"
-
+            app:boxStrokeColor="@color/box_stroke_white"
             app:boxStrokeWidth="1dp"
             app:boxBackgroundMode="outline"
             app:boxCornerRadiusTopStart="8dp"
@@ -61,11 +60,12 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:maxLength="4"
+
                 android:textColor="@color/white"
                 android:padding="12dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- 🔹 Campo: Nombre -->
+        <!-- Campo: Nombre -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilName"
             android:layout_width="0dp"
@@ -74,7 +74,7 @@
             android:hint="Nombre artículo"
             android:textColorHint="@color/white"
             app:hintTextColor="@color/white"
-            app:boxStrokeColor="@color/white"
+            app:boxStrokeColor="@color/box_stroke_white"
             app:boxStrokeWidth="1dp"
             app:boxBackgroundMode="outline"
             app:boxCornerRadiusTopStart="8dp"
@@ -97,7 +97,7 @@
                 android:padding="12dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- 🔹 Campo: Precio -->
+        <!-- Campo: Precio -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilPrice"
             android:layout_width="0dp"
@@ -106,7 +106,7 @@
             android:hint="Precio"
             android:textColorHint="@color/white"
             app:hintTextColor="@color/white"
-            app:boxStrokeColor="@color/white"
+            app:boxStrokeColor="@color/box_stroke_white"
 
             app:boxStrokeWidth="1dp"
             app:boxBackgroundMode="outline"
@@ -130,7 +130,7 @@
                 android:padding="12dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- 🔹 Campo: Cantidad -->
+        <!-- Campo: Cantidad -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilQuantity"
             android:layout_width="0dp"
@@ -139,7 +139,7 @@
             android:hint="Cantidad"
             android:textColorHint="@color/white"
             app:hintTextColor="@color/white"
-            app:boxStrokeColor="@color/white"
+            app:boxStrokeColor="@color/box_stroke_white"
 
             app:boxStrokeWidth="1dp"
             app:boxBackgroundMode="outline"
@@ -163,7 +163,7 @@
                 android:padding="12dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- 🔹 Botón guardar -->
+        <!-- Botón guardar -->
         <Button
             android:id="@+id/btnSaveInventory"
             android:layout_width="0dp"
@@ -174,7 +174,7 @@
             android:textStyle="bold"
             android:enabled="false"
             android:backgroundTint="@color/orange_button"
-            android:textColor="@color/white"
+            android:textColor="@color/button_text_color"
             app:cornerRadius="20dp"
             android:paddingVertical="12dp"
             android:layout_marginStart="16dp"

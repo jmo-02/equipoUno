@@ -14,6 +14,9 @@ import com.example.miniproyecto1.R
 import com.example.miniproyecto1.databinding.FragmentAddItemBinding
 import com.example.miniproyecto1.model.Inventory
 import com.example.miniproyecto1.viewmodel.InventoryViewModel
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+
 
 class AddItemFragment : Fragment() {
 
@@ -59,45 +62,29 @@ class AddItemFragment : Fragment() {
         binding.btnSaveInventory.setOnClickListener {
             val code = binding.etCode.text.toString().toIntOrNull() ?: 0
             val name = binding.etName.text.toString()
-            val priceText = binding.etPrice.text.toString()
-            val quantityText = binding.etQuantity.text.toString()
+            val price = binding.etPrice.text.toString().toIntOrNull() ?: 0
+            val quantity = binding.etQuantity.text.toString().toIntOrNull() ?: 0
 
-            // Validaciones básicas
-            if (name.isEmpty() || priceText.isEmpty() || quantityText.isEmpty()) {
-                Toast.makeText(context, "Por favor completa todos los campos", Toast.LENGTH_SHORT).show()
+            if (code <= 0 || name.isEmpty() || price <= 0 || quantity <= 0) {
+                Toast.makeText(context, "Por favor completa todos los campos correctamente", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            if (name.length > 40) {
-                Toast.makeText(context, "El nombre no puede superar los 40 caracteres", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+            val inventory = Inventory(code = code, name = name, price = price, quantity = quantity)
+
+            // 🔹 Ejecutar dentro de una corutina
+            viewLifecycleOwner.lifecycleScope.launch {
+                val result = inventoryViewModel.saveInventory(inventory)
+
+                if (result) {
+                    Toast.makeText(context, "Producto guardado correctamente", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_addItemFragment_to_homeInventoryFragment)
+                } else {
+                    Toast.makeText(context, "Error: código de producto ya existe", Toast.LENGTH_SHORT).show()
+                }
             }
-
-            if (priceText.length > 20 || quantityText.length > 4 || code > 9999) {
-                Toast.makeText(context, "Verifica que los valores no superen la longitud permitida", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val price = priceText.toIntOrNull() ?: 0
-            val quantity = quantityText.toIntOrNull() ?: 0
-
-            if (price <= 0 || quantity <= 0 || code <= 0) {
-                Toast.makeText(context, "Por favor ingresa valores válidos", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            // Guardar en base de datos
-            val inventory = Inventory(
-                code = code,
-                name = name,
-                price = price,
-                quantity = quantity
-            )
-
-            inventoryViewModel.saveInventory(inventory)
-            Toast.makeText(context, "Producto guardado correctamente", Toast.LENGTH_SHORT).show()
-            findNavController().navigate(R.id.action_addItemFragment_to_homeInventoryFragment)
         }
+
     }
 
     /** 🔹 Validar campos en tiempo real (botón solo activo si todo está lleno) */
