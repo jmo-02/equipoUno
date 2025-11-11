@@ -40,14 +40,14 @@ class AddItemFragment : Fragment() {
         setupListeners()
     }
 
-    /** 🔹 Configurar la flecha del Toolbar para volver al HomeInventario */
+    /** Configura la flecha del Toolbar para volver al HomeInventario */
     private fun setupToolbar() {
         binding.topAppBar.setNavigationOnClickListener {
             findNavController().navigate(R.id.action_addItemFragment_to_homeInventoryFragment)
         }
     }
 
-    /** 🔹 Aplicar límites de caracteres a los campos */
+    /** Aplica límites de caracteres a los campos */
     private fun setupInputLimits() {
         binding.etName.filters = arrayOf(InputFilter.LengthFilter(40))
         binding.etPrice.filters = arrayOf(InputFilter.LengthFilter(20))
@@ -55,7 +55,7 @@ class AddItemFragment : Fragment() {
         binding.etCode.filters = arrayOf(InputFilter.LengthFilter(4))
     }
 
-    /** 🔹 Configurar validaciones y botón guardar */
+    /** Configura validaciones y botón guardar */
     private fun setupListeners() {
         validateInputs()
 
@@ -87,7 +87,7 @@ class AddItemFragment : Fragment() {
 
     }
 
-    /** 🔹 Validar campos en tiempo real (botón solo activo si todo está lleno) */
+    /**  Valida campos en tiempo real (botón solo activo si todo está lleno */
     private fun validateInputs() {
         val fields = listOf(binding.etCode, binding.etName, binding.etPrice, binding.etQuantity)
 
