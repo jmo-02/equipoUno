@@ -1,22 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <data />
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:background="#EFEFEF">
+        android:background="@color/black_translucent"
+        tools:context=".view.fragment.ItemDetailsFragment">
 
-        <TextView
-            android:id="@+id/textView"
+        <!-- Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/gray_toolbar"
+            app:title="Detalle del producto"
+            app:titleTextColor="@color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:navigationIcon="@drawable/ic_arrow_back" />
+
+        <!-- Card con detalles del producto -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardProductDetails"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="6dp"
+            android:layout_margin="16dp"
+            android:backgroundTint="@color/white"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre:"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/tvPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Precio unidad:"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/tvQuantity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cantidad disponible:"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/tvTotal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Total:"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="@color/text_orange" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Botón eliminar -->
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Eliminar"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/orange_button"
+            android:layout_marginHorizontal="16dp"
+            app:layout_constraintTop_toBottomOf="@id/cardProductDetails"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Botón flotante editar -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Detalles del producto"
-            android:textSize="18sp"
-            android:textColor="@android:color/black" />
+            android:layout_margin="20dp"
+            android:contentDescription="editar producto"
+            app:backgroundTint="@color/orange_button"
+            app:srcCompat="@drawable/ic_edit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
