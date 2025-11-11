@@ -20,6 +20,7 @@ class HomeInventoryFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeInventoryBinding
     private val inventoryViewModel: InventoryViewModel by viewModels()
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,6 +28,7 @@ class HomeInventoryFragment : Fragment() {
     ): View {
         binding = FragmentHomeInventoryBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
+        sessionManager = SessionManager(requireContext())
         return binding.root
     }
 
@@ -37,17 +39,40 @@ class HomeInventoryFragment : Fragment() {
         handleBackPressed()
     }
 
+    // Verifica sesión cada vez que el fragment vuelve a ser visible
+    override fun onResume() {
+        super.onResume()
+        checkSessionAndRedirect()
+    }
+
+    private fun checkSessionAndRedirect() {
+        if (!sessionManager.isLoggedIn()) {
+            // Si no hay sesión, redirige al login y limpia el back stack
+            findNavController().navigate(
+                R.id.action_homeInventoryFragment_to_loginFragment,
+                null,
+                androidx.navigation.NavOptions.Builder()
+                    .setPopUpTo(R.id.nav_graph, true) // Limpia TODO el back stack
+                    .build()
+            )
+        }
+    }
+
     private fun setupUI() {
-        // 🔹 FAB: ir a HU 4.0 (Agregar producto)
         binding.fabAgregar.setOnClickListener {
             findNavController().navigate(R.id.action_homeInventoryFragment_to_addItemFragment)
         }
 
-        // 🔹 Logout: limpia sesión y vuelve al login
         binding.ivLogout.setOnClickListener {
-            val session = SessionManager(requireContext())
-            session.clearSession()
-            findNavController().navigate(R.id.action_homeInventoryFragment_to_loginFragment)
+            sessionManager.clearSession()
+
+            findNavController().navigate(
+                R.id.action_homeInventoryFragment_to_loginFragment,
+                null,
+                androidx.navigation.NavOptions.Builder()
+                    .setPopUpTo(R.id.nav_graph, true) // Limpia TODO el back stack
+                    .build()
+            )
         }
     }
 
@@ -65,7 +90,6 @@ class HomeInventoryFragment : Fragment() {
         }
     }
 
-    // 🔹 Evita que el botón atrás del celular regrese al login
     private fun handleBackPressed() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             requireActivity().moveTaskToBack(true)
