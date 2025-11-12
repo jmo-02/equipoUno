@@ -106,12 +106,12 @@ class ItemDetailsFragment : Fragment() {
     private fun mostrarDatosProducto(producto: com.example.miniproyecto1.model.Inventory) {
         val totalProducto = producto.price * producto.quantity
 
-        binding.tvName.text = "Nombre: ${producto.name}"
-        binding.tvPrice.text = "Precio unidad: $${producto.price}"
-        binding.tvQuantity.text = "Cantidad disponible: ${producto.quantity}"
-        binding.tvTotal.text = "Total: $${totalProducto}"
+        binding.tvNameValue.text = producto.name
+        binding.tvPriceValue.text = "$${producto.price}"
+        binding.tvQuantityValue.text = producto.quantity.toString()
+        binding.tvTotalValue.text = "$${totalProducto}"
 
-        binding.toolbar.title = producto.name
+
     }
 
     private fun mostrarDialogoConfirmacionEliminar() {
@@ -133,7 +133,7 @@ class ItemDetailsFragment : Fragment() {
         android.app.AlertDialog.Builder(requireContext())
             .setTitle("Confirmar eliminación")
             .setMessage("¿Estás seguro de que deseas eliminar ${producto.name}?")
-            .setPositiveButton("Sí") { dialog, which ->
+            .setPositiveButton("Sí") { _, _ ->
                 eliminarProducto(producto)
             }
             .setNegativeButton("No", null)
