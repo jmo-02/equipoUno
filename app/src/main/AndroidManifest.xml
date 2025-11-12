@@ -11,22 +11,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MiniProyecto1">
-
         <activity
             android:name=".view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Receiver del App Widget -->
         <receiver
-            android:name=".view.widget.InventoryWidgetProvider"
+            android:name=".widget.InventoryWidgetProvider"
             android:exported="false">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.miniproyecto1.widget.ACTION_TOGGLE_VISIBILITY" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
@@ -34,4 +33,5 @@
         </receiver>
 
     </application>
+
 </manifest>

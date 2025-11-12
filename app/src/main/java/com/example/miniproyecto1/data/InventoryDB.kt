@@ -21,7 +21,10 @@ abstract class InventoryDB : RoomDatabase() {
                     context.applicationContext,
                     InventoryDB::class.java,
                     "inventory_db"
-                ).fallbackToDestructiveMigration().build()
+                )
+                    .allowMainThreadQueries() // ← Permite llamadas en el hilo principal (solo para tu caso rápido)
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

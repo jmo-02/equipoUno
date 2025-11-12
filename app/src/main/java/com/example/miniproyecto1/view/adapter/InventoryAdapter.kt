@@ -9,6 +9,7 @@ import com.example.miniproyecto1.R
 import com.example.miniproyecto1.databinding.ItemInventoryBinding
 import com.example.miniproyecto1.model.Inventory
 import java.util.Locale
+import android.os.Bundle
 
 class InventoryAdapter(
     private val listInventory: MutableList<Inventory>,
@@ -24,9 +25,12 @@ class InventoryAdapter(
         val item = listInventory[position]
         holder.bind(item)
 
-        // 🔹 Navega al fragmento de detalles al hacer clic en un producto
+        // Enviamos el código del producto al hacer clic
         holder.itemView.setOnClickListener {
-            navController.navigate(R.id.action_homeInventoryFragment_to_itemDetailsFragment)
+            val bundle = Bundle().apply {
+                putInt("code", item.code) // 🔹 Enviamos el código como argumento
+            }
+            navController.navigate(R.id.action_homeInventoryFragment_to_itemDetailsFragment, bundle)
         }
     }
 

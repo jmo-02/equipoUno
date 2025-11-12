@@ -19,6 +19,9 @@ interface InventoryDao {
     // 3) Método suspend para uso puntual (ej. llamadas sincronas en repository)
     @Query("SELECT * FROM inventory")
     suspend fun getAllItemsList(): List<Inventory>
+    // Método NO suspend para el widget
+    @Query("SELECT * FROM inventory")
+    fun getAllItemsListSync(): List<Inventory>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertItem(item: Inventory)
