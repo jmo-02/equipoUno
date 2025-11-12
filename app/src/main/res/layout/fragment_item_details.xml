@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black_translucent"
+        android:background="#CC000000"
         tools:context=".view.fragment.ItemDetailsFragment">
 
         <!-- Toolbar -->
@@ -14,23 +14,24 @@
             android:id="@+id/toolbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/gray_toolbar"
+            android:background="#424242"
             app:title="Detalle del producto"
-            app:titleTextColor="@color/white"
+            app:titleTextColor="@android:color/white"
+            app:navigationIcon="@drawable/ic_arrow_back"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:navigationIcon="@drawable/ic_arrow_back" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Card con detalles del producto -->
+        <!-- Tarjeta con detalles -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardProductDetails"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="60dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="6dp"
-            android:layout_margin="16dp"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@android:color/white"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -39,68 +40,126 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
+                <!-- Nombre del producto -->
                 <TextView
-                    android:id="@+id/tvName"
+                    android:id="@+id/tvNameValue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Nombre:"
-                    android:textSize="18sp"
                     android:textColor="@android:color/black"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/tvPrice"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Precio unidad:"
-                    android:textSize="18sp"
-                    android:textColor="@android:color/black"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/tvQuantity"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Cantidad disponible:"
-                    android:textSize="18sp"
-                    android:textColor="@android:color/black"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/tvTotal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Total:"
                     android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="@color/text_orange" />
+                    android:textSize="20sp"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="start" />
 
+                <!-- Precio -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/tvPriceLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Precio unidad:"
+                        android:textSize="18sp"
+                        android:textColor="@android:color/black"
+                        android:gravity="start" />
+
+                    <TextView
+                        android:id="@+id/tvPriceValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textColor="@color/text_orange"
+                        android:gravity="end" />
+                </LinearLayout>
+
+                <!-- Cantidad -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/tvQuantityLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Cantidad disponible:"
+                        android:textSize="18sp"
+                        android:textColor="@android:color/black"
+                        android:gravity="start" />
+
+                    <TextView
+                        android:id="@+id/tvQuantityValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textColor="@android:color/black"
+                        android:gravity="end" />
+                </LinearLayout>
+
+                <!-- Total -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/tvTotalLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Total:"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:textColor="@android:color/black"
+                        android:gravity="start" />
+
+                    <TextView
+                        android:id="@+id/tvTotalValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:textColor="@color/text_orange"
+                        android:gravity="end" />
+                </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Botón eliminar -->
+        <!-- Botón Eliminar -->
         <Button
             android:id="@+id/btnDelete"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Eliminar"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/orange_button"
-            android:layout_marginHorizontal="16dp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/text_orange"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="40dp"
+            android:paddingVertical="10dp"
+            android:layoutDirection="ltr"
             app:layout_constraintTop_toBottomOf="@id/cardProductDetails"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Botón flotante editar -->
+        <!-- Botón flotante Editar -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
-            android:contentDescription="editar producto"
-            app:backgroundTint="@color/orange_button"
+            app:backgroundTint="@color/text_orange"
             app:srcCompat="@drawable/ic_edit"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
