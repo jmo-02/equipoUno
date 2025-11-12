@@ -7,4 +7,5 @@
     <color name="gray_field_background">#2E2E2E</color> <!-- Nuevo: fondo de los campos -->
     <color name="backgroundColorItem">#2E2E2E</color>
     <color name="text_orange">#e7522e</color>
+
 </resources>
