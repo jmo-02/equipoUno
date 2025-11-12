@@ -12,6 +12,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.miniproyecto1.R
 import com.example.miniproyecto1.databinding.FragmentItemDetailsBinding
 import com.example.miniproyecto1.viewmodel.InventoryViewModel
+import java.text.NumberFormat
+import java.util.Locale
 
 class ItemDetailsFragment : Fragment() {
 
@@ -32,7 +34,6 @@ class ItemDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Obtener el código del producto desde los argumentos
         recibirCodigoProducto()
 
         if (productCode == -1) {
@@ -55,70 +56,52 @@ class ItemDetailsFragment : Fragment() {
     }
 
     private fun configurarInterfazUsuario() {
-        configurarToolbar()
-        configurarBotonEliminar()
-        configurarBotonEditar()
-    }
-
-    private fun configurarToolbar() {
-        binding.toolbar.setNavigationOnClickListener {
-            regresarAListaProductos()
-        }
-    }
-
-    private fun configurarBotonEliminar() {
-        binding.btnDelete.setOnClickListener {
-            mostrarDialogoConfirmacionEliminar()
-        }
-    }
-
-    private fun configurarBotonEditar() {
-        binding.fabEdit.setOnClickListener {
-            navegarAEdicionProducto()
-        }
+        binding.toolbar.setNavigationOnClickListener { regresarAListaProductos() }
+        binding.btnDelete.setOnClickListener { mostrarDialogoConfirmacionEliminar() }
+        binding.fabEdit.setOnClickListener { navegarAEdicionProducto() }
     }
 
     private fun observarViewModel() {
-        observarListaProductos()
-        cargarListaProductos()
-    }
-
-    private fun observarListaProductos() {
         inventoryViewModel.listInventory.observe(viewLifecycleOwner) { listaProductos ->
             buscarYMostrarProducto(listaProductos)
         }
-    }
-
-    private fun cargarListaProductos() {
         inventoryViewModel.getListInventory()
     }
 
     private fun buscarYMostrarProducto(listaProductos: MutableList<com.example.miniproyecto1.model.Inventory>) {
         val producto = listaProductos.find { it.code == productCode }
-
-        if (producto != null) {
-            mostrarDatosProducto(producto)
-        } else {
-            mostrarErrorProductoNoEncontrado()
-        }
+        if (producto != null) mostrarDatosProducto(producto)
+        else mostrarErrorProductoNoEncontrado()
     }
 
     private fun mostrarDatosProducto(producto: com.example.miniproyecto1.model.Inventory) {
         val totalProducto = producto.price * producto.quantity
 
+        // 🔹 Formato de número colombiano
+        val formatoColombiano = NumberFormat.getInstance(Locale("es", "CO")).apply {
+            minimumFractionDigits = 2
+            maximumFractionDigits = 2
+        }
+
+        val precioFormateado = formatoColombiano.format(producto.price)
+        val totalFormateado = formatoColombiano.format(totalProducto)
+
+        // 🔹 Asignar a las vistas
         binding.tvNameValue.text = producto.name
-        binding.tvPriceValue.text = "$${producto.price}"
+        binding.tvPriceValue.text = "$ $precioFormateado"
         binding.tvQuantityValue.text = producto.quantity.toString()
-        binding.tvTotalValue.text = "$${totalProducto}"
-
-
+        binding.tvTotalValue.text = "$ $totalFormateado"
     }
 
     private fun mostrarDialogoConfirmacionEliminar() {
         val productoEliminar = obtenerProductoActual()
-
         if (productoEliminar != null) {
-            mostrarDialogoConfirmacion(productoEliminar)
+            android.app.AlertDialog.Builder(requireContext())
+                .setTitle("Confirmar eliminación")
+                .setMessage("¿Estás seguro de que deseas eliminar ${productoEliminar.name}?")
+                .setPositiveButton("Sí") { _, _ -> eliminarProducto(productoEliminar) }
+                .setNegativeButton("No", null)
+                .show()
         } else {
             Toast.makeText(requireContext(), "Error: Producto no encontrado", Toast.LENGTH_SHORT).show()
         }
@@ -129,17 +112,6 @@ class ItemDetailsFragment : Fragment() {
         return listaActual?.find { it.code == productCode }
     }
 
-    private fun mostrarDialogoConfirmacion(producto: com.example.miniproyecto1.model.Inventory) {
-        android.app.AlertDialog.Builder(requireContext())
-            .setTitle("Confirmar eliminación")
-            .setMessage("¿Estás seguro de que deseas eliminar ${producto.name}?")
-            .setPositiveButton("Sí") { _, _ ->
-                eliminarProducto(producto)
-            }
-            .setNegativeButton("No", null)
-            .show()
-    }
-
     private fun eliminarProducto(producto: com.example.miniproyecto1.model.Inventory) {
         inventoryViewModel.deleteInventory(producto)
         Toast.makeText(requireContext(), "${producto.name} eliminado", Toast.LENGTH_SHORT).show()
@@ -147,9 +119,7 @@ class ItemDetailsFragment : Fragment() {
     }
 
     private fun navegarAEdicionProducto() {
-        val bundle = Bundle().apply {
-            putInt("code", productCode)
-        }
+        val bundle = Bundle().apply { putInt("code", productCode) }
         findNavController().navigate(R.id.action_itemDetailsFragment_to_itemEditFragment, bundle)
     }
 
