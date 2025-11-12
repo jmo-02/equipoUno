@@ -173,7 +173,7 @@
             android:textAllCaps="false"
             android:textStyle="bold"
             android:enabled="false"
-            android:backgroundTint="@color/orange_button"
+            android:backgroundTint="@color/text_orange"
             android:textColor="@color/button_text_color"
             app:cornerRadius="20dp"
             android:paddingVertical="12dp"

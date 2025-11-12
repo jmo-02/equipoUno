@@ -57,8 +57,8 @@
             android:layout_margin="16dp"
             android:contentDescription="@string/agregar_producto"
             android:src="@drawable/ic_add"
-            app:tint="@color/white"
-            app:backgroundTint="@color/orange_button"
+            app:tint="@color/black_translucent"
+            app:backgroundTint="@color/text_orange"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
