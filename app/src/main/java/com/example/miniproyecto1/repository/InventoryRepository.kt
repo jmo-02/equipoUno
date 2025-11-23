@@ -7,51 +7,57 @@ import com.example.miniproyecto1.data.InventoryDao
 import com.example.miniproyecto1.model.Inventory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class InventoryRepository(context: Context) {
+class InventoryRepository @Inject constructor(
+    private val firestore: FirebaseFirestore
+) {
 
-    private val inventoryDao: InventoryDao = InventoryDB.getDatabase(context).inventoryDao()
+    private val collection = firestore.collection("inventory")
 
-    /**
-     * Guarda un producto en la base de datos.
-     * Retorna true si se guarda correctamente, false si el código ya existe o hay error.
-     */
     suspend fun saveInventory(inventory: Inventory): Boolean {
-        return withContext(Dispatchers.IO) {
-            try {
-                inventoryDao.insertItem(inventory)
-                true
-            } catch (e: SQLiteConstraintException) {
-                // Error por duplicidad de 'code' (índice único)
-                false
-            } catch (e: Exception) {
-                // Cualquier otro error general
-                false
-            }
+        return try {
+            // Verificar si ya existe un producto con ese código
+            val doc = collection.document(inventory.code.toString()).get().await()
+            if (doc.exists()) return false
+
+            // Guardar
+            collection.document(inventory.code.toString()).set(inventory).await()
+            true
+        } catch (e: Exception) {
+            false
         }
     }
 
     suspend fun getListInventory(): MutableList<Inventory> {
-        return withContext(Dispatchers.IO) {
-            inventoryDao.getAllItemsList().toMutableList()
+        return try {
+            val snapshot = collection.get().await()
+            snapshot.toObjects(Inventory::class.java).toMutableList()
+        } catch (e: Exception) {
+            mutableListOf()
         }
     }
 
     suspend fun deleteInventory(inventory: Inventory) {
-        withContext(Dispatchers.IO) {
-            inventoryDao.deleteItem(inventory)
-        }
+        try {
+            collection.document(inventory.code.toString()).delete().await()
+        } catch (e: Exception) { }
     }
 
     suspend fun updateInventory(inventory: Inventory) {
-        withContext(Dispatchers.IO) {
-            inventoryDao.updateItem(inventory)
-        }
+        try {
+            collection.document(inventory.code.toString()).set(inventory).await()
+        } catch (e: Exception) { }
     }
 
     suspend fun getById(id: Int): Inventory? {
-        return withContext(Dispatchers.IO) {
-            inventoryDao.getItemById(id)
+        return try {
+            val doc = collection.document(id.toString()).get().await()
+            doc.toObject(Inventory::class.java)
+        } catch (e: Exception) {
+            null
         }
     }
 }

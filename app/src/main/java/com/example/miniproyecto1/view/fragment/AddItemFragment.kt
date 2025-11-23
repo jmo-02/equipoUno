@@ -15,9 +15,10 @@ import com.example.miniproyecto1.databinding.FragmentAddItemBinding
 import com.example.miniproyecto1.model.Inventory
 import com.example.miniproyecto1.viewmodel.InventoryViewModel
 import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class AddItemFragment : Fragment() {
 
     private lateinit var binding: FragmentAddItemBinding
