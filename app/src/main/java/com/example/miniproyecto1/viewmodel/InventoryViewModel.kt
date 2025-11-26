@@ -1,19 +1,21 @@
 package com.example.miniproyecto1.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
 import com.example.miniproyecto1.model.Inventory
 import com.example.miniproyecto1.repository.InventoryRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class InventoryViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repository = InventoryRepository(application.applicationContext)
+@HiltViewModel
+class InventoryViewModel @Inject constructor(
+    private val repository: InventoryRepository
+) : ViewModel() {
 
     private val _listInventory = MutableLiveData<MutableList<Inventory>>()
     val listInventory: LiveData<MutableList<Inventory>> get() = _listInventory
@@ -21,30 +23,35 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
     private val _progressState = MutableLiveData(false)
     val progressState: LiveData<Boolean> get() = _progressState
 
-    // --- CRUD ---
+    // --- CRUD FIREBASE ---
 
     suspend fun saveInventory(inventory: Inventory): Boolean {
         _progressState.value = true
-        return withContext(Dispatchers.IO) {
-            try {
-                val result = repository.saveInventory(inventory)
-                if (result) {
-                    _listInventory.postValue(repository.getListInventory())
-                }
-                result
-            } finally {
-                _progressState.postValue(false)
+        return try {
+            val result = repository.saveInventory(inventory)
+            if (result) {
+                val list = repository.getListInventory()
+                _listInventory.postValue(list)
             }
+            result
+        } finally {
+            _progressState.postValue(false)
         }
     }
 
+
+    // ... en getListInventory()
     fun getListInventory() {
         viewModelScope.launch {
-            _progressState.value = true
+            _progressState.postValue(true) // Usar postValue
             try {
-                _listInventory.value = repository.getListInventory()
-            } finally {
-                _progressState.value = false
+                val list = repository.getListInventory() // La llamada a la función es la que trae la lista
+                _listInventory.postValue(list) // Usar postValue
+            }catch (e: Exception){
+                // Manejo de errores
+            }
+            finally {
+                _progressState.postValue(false) // Usar postValue
             }
         }
     }
@@ -87,6 +94,4 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
     fun totalProducto(precio: Double, cantidad: Int): Double {
         return precio * cantidad
     }
-
-    companion object
 }

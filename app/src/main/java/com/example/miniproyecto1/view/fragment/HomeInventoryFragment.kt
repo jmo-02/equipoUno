@@ -15,12 +15,18 @@ import com.example.miniproyecto1.databinding.FragmentHomeInventoryBinding
 import com.example.miniproyecto1.utils.SessionManager
 import com.example.miniproyecto1.view.adapter.InventoryAdapter
 import com.example.miniproyecto1.viewmodel.InventoryViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeInventoryFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeInventoryBinding
     private val inventoryViewModel: InventoryViewModel by viewModels()
+
     private lateinit var sessionManager: SessionManager
+
+    // 🔹 Mantener un solo Adapter
+    private lateinit var adapter: InventoryAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,30 +40,49 @@ class HomeInventoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setupRecyclerView()
         setupUI()
         observeViewModel()
         handleBackPressed()
     }
 
-    // Verifica sesión cada vez que el fragment vuelve a ser visible
     override fun onResume() {
         super.onResume()
-        checkSessionAndRedirect()
+        checkSession()
     }
 
-    private fun checkSessionAndRedirect() {
-        if (!sessionManager.isLoggedIn()) {
-            // Si no hay sesión, redirige al login y limpia el back stack
-            findNavController().navigate(
-                R.id.action_homeInventoryFragment_to_loginFragment,
-                null,
-                androidx.navigation.NavOptions.Builder()
-                    .setPopUpTo(R.id.nav_graph, true) // Limpia TODO el back stack
-                    .build()
-            )
+    // -------------------------------
+    // 🔹 RECYCLERVIEW CONFIG
+    // -------------------------------
+    private fun setupRecyclerView() {
+        adapter = InventoryAdapter(mutableListOf(), findNavController())
+
+        binding.recyclerviewInventory.layoutManager =
+            LinearLayoutManager(requireContext())
+
+        binding.recyclerviewInventory.adapter = adapter
+    }
+
+    // -------------------------------
+    // 🔹 OBSERVERS
+    // -------------------------------
+    private fun observeViewModel() {
+        inventoryViewModel.getListInventory()
+
+        inventoryViewModel.listInventory.observe(viewLifecycleOwner) { list ->
+            adapter.updateData(list)
+
+        }
+
+        inventoryViewModel.progressState.observe(viewLifecycleOwner) { state ->
+            binding.progressLoading.isVisible = state
         }
     }
 
+    // -------------------------------
+    // 🔹 UI BUTTONS
+    // -------------------------------
     private fun setupUI() {
         binding.fabAgregar.setOnClickListener {
             findNavController().navigate(R.id.action_homeInventoryFragment_to_addItemFragment)
@@ -70,26 +95,30 @@ class HomeInventoryFragment : Fragment() {
                 R.id.action_homeInventoryFragment_to_loginFragment,
                 null,
                 androidx.navigation.NavOptions.Builder()
-                    .setPopUpTo(R.id.nav_graph, true) // Limpia TODO el back stack
+                    .setPopUpTo(R.id.nav_graph, true)
                     .build()
             )
         }
     }
 
-    private fun observeViewModel() {
-        inventoryViewModel.getListInventory()
-
-        inventoryViewModel.listInventory.observe(viewLifecycleOwner) { listInventory ->
-            val recycler = binding.recyclerviewInventory
-            recycler.layoutManager = LinearLayoutManager(context)
-            recycler.adapter = InventoryAdapter(listInventory, findNavController())
-        }
-
-        inventoryViewModel.progressState.observe(viewLifecycleOwner) { status ->
-            binding.progressLoading.isVisible = status
+    // -------------------------------
+    // 🔹 SESIÓN
+    // -------------------------------
+    private fun checkSession() {
+        if (!sessionManager.isLoggedIn()) {
+            findNavController().navigate(
+                R.id.action_homeInventoryFragment_to_loginFragment,
+                null,
+                androidx.navigation.NavOptions.Builder()
+                    .setPopUpTo(R.id.nav_graph, true)
+                    .build()
+            )
         }
     }
 
+    // -------------------------------
+    // 🔹 BACK BUTTON (SALIR DE LA APP)
+    // -------------------------------
     private fun handleBackPressed() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             requireActivity().moveTaskToBack(true)

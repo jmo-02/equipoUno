@@ -16,8 +16,20 @@ class InventoryAdapter(
     private val navController: NavController
 ) : RecyclerView.Adapter<InventoryAdapter.InventoryViewHolder>() {
 
+    fun updateData(newList: MutableList<Inventory>) {
+        listInventory.clear()
+        listInventory.addAll(newList)
+        notifyDataSetChanged()
+
+
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InventoryViewHolder {
-        val binding = ItemInventoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemInventoryBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         return InventoryViewHolder(binding)
     }
 
@@ -25,11 +37,8 @@ class InventoryAdapter(
         val item = listInventory[position]
         holder.bind(item)
 
-        // Enviamos el código del producto al hacer clic
         holder.itemView.setOnClickListener {
-            val bundle = Bundle().apply {
-                putInt("code", item.code) // 🔹 Enviamos el código como argumento
-            }
+            val bundle = Bundle().apply { putInt("code", item.code) }
             navController.navigate(R.id.action_homeInventoryFragment_to_itemDetailsFragment, bundle)
         }
     }
@@ -42,16 +51,16 @@ class InventoryAdapter(
         fun bind(inventory: Inventory) {
             binding.tvName.text = inventory.name
 
-            // Formato de moneda colombiana
-            val localeColombia = Locale.forLanguageTag("es-CO")
-            val formatoColombiano = NumberFormat.getInstance(localeColombia).apply {
-                minimumFractionDigits = 2
-                maximumFractionDigits = 2
-            }
+            val formatter = NumberFormat
+                .getInstance(Locale.forLanguageTag("es-CO"))
+                .apply {
+                    minimumFractionDigits = 2
+                    maximumFractionDigits = 2
+                }
 
-            val precioFormateado = formatoColombiano.format(inventory.price)
-            binding.tvPrice.text = "$ $precioFormateado"
+            binding.tvPrice.text = "$ ${formatter.format(inventory.price)}"
             binding.tvCode.text = "Id: ${inventory.code}"
         }
     }
 }
+

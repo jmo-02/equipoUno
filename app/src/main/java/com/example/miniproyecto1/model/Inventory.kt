@@ -12,8 +12,17 @@ data class Inventory(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
-    val code: Int,
-    val name: String,
-    val price: Int,
+    val code: Int ,
+    val name: String ,
+    val price: Int ,
     val quantity: Int
-)
+){
+    // 3. Constructor sin argumentos explícito (Recomendado para Firebase)
+    constructor() : this(
+        id = 0,
+        code = 0,
+        name = "",
+        price = 0,
+        quantity = 0
+    )
+}

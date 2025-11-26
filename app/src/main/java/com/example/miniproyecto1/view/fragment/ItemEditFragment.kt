@@ -16,7 +16,9 @@ import com.example.miniproyecto1.R
 import com.example.miniproyecto1.databinding.FragmentItemEditBinding
 import com.example.miniproyecto1.model.Inventory
 import com.example.miniproyecto1.viewmodel.InventoryViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ItemEditFragment : Fragment() {
 
     private lateinit var binding: FragmentItemEditBinding
