@@ -51,7 +51,7 @@
                 android:inputType="textEmailAddress"
                 android:maxLength="40"
                 android:textColor="@color/white"
-                android:padding="12dp"/>
+                android:padding="15dp"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Campo Password (Criterios 4, 5, 6) -->
@@ -85,7 +85,7 @@
                 android:inputType="numberPassword"
                 android:maxLength="10"
                 android:textColor="@color/white"
-                android:padding="12dp"/>
+                android:padding="15dp"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Botón Login (Criterios 7 y 8) -->
