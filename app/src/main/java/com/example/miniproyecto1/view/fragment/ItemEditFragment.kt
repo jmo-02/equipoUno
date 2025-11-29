@@ -60,8 +60,9 @@ class ItemEditFragment : Fragment() {
     private fun configurarToolbar() {
         binding.topAppBar.setNavigationIcon(R.drawable.ic_arrow_back)
         binding.topAppBar.setNavigationOnClickListener {
-            val bundle = Bundle().apply { putInt("code", productCode) }
-            findNavController().navigate(R.id.itemDetailsFragment, bundle)
+            // En lugar de crear una nueva instancia de ItemDetailsFragment, simplemente
+            // volvemos al fragmento anterior en la pila para evitar ciclos de navegación.
+            findNavController().navigateUp()
         }
     }
 
