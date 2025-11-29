@@ -60,8 +60,9 @@ class ItemEditFragment : Fragment() {
     private fun configurarToolbar() {
         binding.topAppBar.setNavigationIcon(R.drawable.ic_arrow_back)
         binding.topAppBar.setNavigationOnClickListener {
-            val bundle = Bundle().apply { putInt("code", productCode) }
-            findNavController().navigate(R.id.itemDetailsFragment, bundle)
+            // Pop the back stack to return to the previous destination (ItemDetailsFragment or Home)
+            // Avoid navigating explicitly to a new instance of ItemDetailsFragment which caused a loop.
+            findNavController().navigateUp()
         }
     }
 
