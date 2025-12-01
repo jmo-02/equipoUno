@@ -8,53 +8,53 @@ import com.example.miniproyecto1.model.Inventory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.google.firebase.firestore.FirebaseFirestore
-    private val firestore: FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-    private val collection = firestore.collection("inventory")
-    private val firestoreProvider: FirestoreProvider
+class InventoryRepository @Inject constructor(
+    private val firestore: FirebaseFirestore
 ) {
 
-    private val collectionName = "inventory"
-            val doc = collection.document(inventory.code.toString()).get().await()
+    private val collection = firestore.collection("inventory")
+
     suspend fun saveInventory(inventory: Inventory): Boolean {
         return try {
             // Verificar si ya existe un producto con ese código
-            collection.document(inventory.code.toString()).set(inventory).await()
+            val doc = collection.document(inventory.code.toString()).get().await()
             if (doc.exists()) return false
 
             // Guardar
-            firestoreProvider.setDocument(collectionName, inventory.code.toString(), inventory).await()
+            collection.document(inventory.code.toString()).set(inventory).await()
             true
         } catch (e: Exception) {
             false
         }
-            val snapshot = collection.get().await()
+    }
 
     suspend fun getListInventory(): MutableList<Inventory> {
         return try {
-            val snapshot: QuerySnapshot = firestoreProvider.getCollectionSnapshot(collectionName).await()
+            val snapshot = collection.get().await()
             snapshot.toObjects(Inventory::class.java).toMutableList()
         } catch (e: Exception) {
             mutableListOf()
         }
-            collection.document(inventory.code.toString()).delete().await()
+    }
 
     suspend fun deleteInventory(inventory: Inventory) {
         try {
-            firestoreProvider.deleteDocument(collectionName, inventory.code.toString()).await()
+            collection.document(inventory.code.toString()).delete().await()
         } catch (e: Exception) { }
-            collection.document(inventory.code.toString()).set(inventory).await()
+    }
 
     suspend fun updateInventory(inventory: Inventory) {
         try {
-            firestoreProvider.setDocument(collectionName, inventory.code.toString(), inventory).await()
+            collection.document(inventory.code.toString()).set(inventory).await()
         } catch (e: Exception) { }
-            val doc = collection.document(id.toString()).get().await()
+    }
 
     suspend fun getById(id: Int): Inventory? {
         return try {
-            val doc: DocumentSnapshot = firestoreProvider.getDocument(collectionName, id.toString()).await()
+            val doc = collection.document(id.toString()).get().await()
             doc.toObject(Inventory::class.java)
         } catch (e: Exception) {
             null
