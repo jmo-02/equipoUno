@@ -60,12 +60,16 @@ class ItemEditFragment : Fragment() {
     private fun configurarToolbar() {
         binding.topAppBar.setNavigationIcon(R.drawable.ic_arrow_back)
         binding.topAppBar.setNavigationOnClickListener {
-            val bundle = Bundle().apply { putInt("code", productCode) }
-            findNavController().navigate(R.id.itemDetailsFragment, bundle)
+            // En lugar de crear una nueva instancia de ItemDetailsFragment, simplemente
+            // volvemos al fragmento anterior en la pila para evitar ciclos de navegación.
+            findNavController().navigateUp()
         }
     }
 
     private fun configurarFiltrosYValidacion() {
+        // Asegurar que el botón esté deshabilitado hasta que los campos sean válidos (Criterio 5)
+        binding.btnEdit.isEnabled = false
+
         binding.etName.filters = arrayOf(InputFilter.LengthFilter(40))
         binding.etPrice.filters = arrayOf(InputFilter.LengthFilter(20))
         binding.etQuantity.filters = arrayOf(InputFilter.LengthFilter(4))
@@ -95,11 +99,46 @@ class ItemEditFragment : Fragment() {
         val price = binding.etPrice.text?.toString()?.trim() ?: ""
         val quantity = binding.etQuantity.text?.toString()?.trim() ?: ""
 
-        val nameValid = name.isNotEmpty() && name.length <= 40
-        val priceValid = price.isNotEmpty() && price.matches(Regex("^[0-9]{1,20}$"))
-        val quantityValid = quantity.isNotEmpty() && quantity.matches(Regex("^[0-9]{1,4}$"))
+        // Validaciones Criterios 5-8
+        if (name.isEmpty()) {
+            binding.tilName.error = "El nombre no puede estar vacío"
+        } else if (name.length > 40) {
+            binding.tilName.error = "Máximo 40 caracteres"
+        } else {
+            binding.tilName.error = null
+        }
 
-        binding.btnEdit.isEnabled = nameValid && priceValid && quantityValid
+        if (price.isEmpty()) {
+            binding.tilPrice.error = "El precio no puede estar vacío"
+        } else if (!price.matches(Regex("^[0-9]{1,20}$"))) {
+            binding.tilPrice.error = "Precio inválido (solo números, hasta 20 dígitos)"
+        } else {
+            binding.tilPrice.error = null
+        }
+
+        if (quantity.isEmpty()) {
+            binding.tilQuantity.error = "La cantidad no puede estar vacía"
+        } else if (!quantity.matches(Regex("^[0-9]{1,4}$"))) {
+            binding.tilQuantity.error = "Cantidad inválida (solo números, hasta 4 dígitos)"
+        } else {
+            binding.tilQuantity.error = null
+        }
+
+        // Usar la función reutilizable para determinar si el formulario es válido
+        binding.btnEdit.isEnabled = isFormValid()
+    }
+
+    // Función reusable para evaluar el estado del formulario sin cambiar UI (útil para tests)
+    private fun isFormValid(): Boolean {
+        val name = binding.etName.text?.toString()?.trim() ?: ""
+        val price = binding.etPrice.text?.toString()?.trim() ?: ""
+        val quantity = binding.etQuantity.text?.toString()?.trim() ?: ""
+
+        if (name.isEmpty() || name.length > 40) return false
+        if (!price.matches(Regex("^[0-9]{1,20}$"))) return false
+        if (!quantity.matches(Regex("^[0-9]{1,4}$"))) return false
+
+        return true
     }
 
     private fun observarViewModel() {
@@ -116,7 +155,9 @@ class ItemEditFragment : Fragment() {
     }
 
     private fun poblarDatos(producto: Inventory) {
-        binding.tvCode.text = "Id: ${producto.code}"
+        // Mostrar el código como "Id: <codigo>" directamente para evitar problemas con recursos en tiempo de compilación
+        // Usar recurso de string con placeholder para internacionalización (evita advertencias Lint)
+        binding.tvCode.text = getString(R.string.label_id, producto.code)
         binding.etName.setText(producto.name)
         binding.etPrice.setText(producto.price.toString())
         binding.etQuantity.setText(producto.quantity.toString())
