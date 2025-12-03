@@ -3,12 +3,15 @@ package com.example.miniproyecto1.widget
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.widget.RemoteViews
 import com.example.miniproyecto1.R
 import com.example.miniproyecto1.data.InventoryDB
+import com.example.miniproyecto1.view.MainActivity
+import com.google.firebase.auth.FirebaseAuth
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -16,14 +19,43 @@ class InventoryWidgetProvider : AppWidgetProvider() {
 
     companion object {
         const val ACTION_TOGGLE = "com.example.miniproyecto1.widget.ACTION_TOGGLE_VISIBILITY"
+        const val ACTION_MANAGE = "com.example.miniproyecto1.widget.ACTION_MANAGE_INVENTORY"
         private const val PREFS = "inventory_widget_prefs"
 
         private fun prefs(context: Context) =
             context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+
+        fun updateAllWidgets(context: Context) {
+            val appWidgetManager = AppWidgetManager.getInstance(context)
+            val ids = appWidgetManager.getAppWidgetIds(
+                ComponentName(context, InventoryWidgetProvider::class.java)
+            )
+            if (ids.isNotEmpty()) {
+                val intent = Intent(context, InventoryWidgetProvider::class.java).apply {
+                    action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+                }
+                context.sendBroadcast(intent)
+            }
+        }
+
+        // Limpia todas las claves visible_$id (para logout)
+        fun clearAllVisibilityPrefs(context: Context) {
+            val p = prefs(context)
+            p.edit().clear().apply()
+            updateAllWidgets(context)
+        }
     }
 
     override fun onUpdate(context: Context, manager: AppWidgetManager, appWidgetIds: IntArray) {
-        appWidgetIds.forEach { id -> updateWidget(context, manager, id) }
+        appWidgetIds.forEach { id ->
+            // Inicializa preferencia en false si no existe
+            val p = prefs(context)
+            if (!p.contains("visible_$id")) {
+                p.edit().putBoolean("visible_$id", false).apply()
+            }
+            updateWidget(context, manager, id)
+        }
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -36,48 +68,82 @@ class InventoryWidgetProvider : AppWidgetProvider() {
                     AppWidgetManager.INVALID_APPWIDGET_ID
                 )
                 if (widgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-                    toggleVisibility(context, widgetId)
-                    updateWidget(context, manager, widgetId)
+                    handleEyeClick(context, manager, widgetId)
                 }
+            }
+            ACTION_MANAGE -> {
+                val widgetId = intent.getIntExtra(
+                    AppWidgetManager.EXTRA_APPWIDGET_ID,
+                    AppWidgetManager.INVALID_APPWIDGET_ID
+                )
+                handleManageClick(context, widgetId)
+            }
+            AppWidgetManager.ACTION_APPWIDGET_UPDATE -> {
+                val ids = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS)
+                if (ids != null) onUpdate(context, AppWidgetManager.getInstance(context), ids)
             }
         }
     }
 
+    private fun handleEyeClick(context: Context, manager: AppWidgetManager, widgetId: Int) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null) {
+            toggleVisibility(context, widgetId)
+            updateWidget(context, manager, widgetId)
+        } else {
+            val loginIntent = Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                putExtra("fromWidget", true)
+                putExtra("widgetAction", "toggleBalance")
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+            }
+            context.startActivity(loginIntent)
+        }
+    }
+
+    private fun handleManageClick(context: Context, widgetId: Int) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra("fromWidget", true)
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+            putExtra("widgetAction", if (currentUser != null) "goToHome" else "manageInventory")
+        }
+        context.startActivity(intent)
+    }
+
     private fun updateWidget(context: Context, manager: AppWidgetManager, widgetId: Int) {
         val views = RemoteViews(context.packageName, R.layout.widget_inventory)
+        val user = FirebaseAuth.getInstance().currentUser
 
-        val visible = isVisible(context, widgetId)
-        val total = calcularTotalInventario(context)
-
-        if (visible) {
-            views.setTextViewText(R.id.inv_balance, "$ ${formatMoney(total)}")
-            views.setImageViewResource(R.id.inv_toggle_eye, R.drawable.ic_eye_closed)
-        } else {
+        if (user == null) {
+            // No logueado: SIEMPRE ocultar saldo e ícono ojo abierto
             views.setTextViewText(R.id.inv_balance, "$ ****")
             views.setImageViewResource(R.id.inv_toggle_eye, R.drawable.ic_eye_open)
+        } else {
+            val visible = isVisible(context, widgetId)
+            val total = calcularTotalInventario(context)
+            if (visible) {
+                views.setTextViewText(R.id.inv_balance, "$ ${formatMoney(total)}")
+                views.setImageViewResource(R.id.inv_toggle_eye, R.drawable.ic_eye_closed)
+            } else {
+                views.setTextViewText(R.id.inv_balance, "$ ****")
+                views.setImageViewResource(R.id.inv_toggle_eye, R.drawable.ic_eye_open)
+            }
         }
 
-        // Toggle del ojo
         val toggleIntent = Intent(context, InventoryWidgetProvider::class.java).apply {
             action = ACTION_TOGGLE
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
         }
-        val togglePI = PendingIntent.getBroadcast(
-            context,
-            widgetId,
-            toggleIntent,
-            pendingFlags()
-        )
+        val togglePI = PendingIntent.getBroadcast(context, widgetId, toggleIntent, pendingFlags())
         views.setOnClickPendingIntent(R.id.inv_toggle_eye, togglePI)
 
-        // Gestionar inventario → abre MainActivity (si quieres Login cambia la clase)
-        val manageIntent = Intent(context, com.example.miniproyecto1.view.MainActivity::class.java)
-        val managePI = PendingIntent.getActivity(
-            context,
-            widgetId + 1000,
-            manageIntent,
-            pendingFlags()
-        )
+        val manageIntent = Intent(context, InventoryWidgetProvider::class.java).apply {
+            action = ACTION_MANAGE
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+        }
+        val managePI = PendingIntent.getBroadcast(context, widgetId + 1000, manageIntent, pendingFlags())
         views.setOnClickPendingIntent(R.id.inv_manage_icon, managePI)
         views.setOnClickPendingIntent(R.id.inv_manage_text, managePI)
 
@@ -95,7 +161,7 @@ class InventoryWidgetProvider : AppWidgetProvider() {
     }
 
     private fun formatMoney(value: Double): String {
-        val locale = Locale.forLanguageTag("es-CO")
+        val locale = Locale("es", "ES")
         val nf = NumberFormat.getNumberInstance(locale).apply {
             minimumFractionDigits = 2
             maximumFractionDigits = 2

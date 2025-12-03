@@ -8,7 +8,6 @@
     android:background="@drawable/widget_bg"
     android:padding="10dp">
 
-    <!-- Logo reducido -->
     <ImageView
         android:id="@+id/inv_logo"
         android:layout_width="40dp"
@@ -18,9 +17,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:contentDescription="@string/inv_logo_desc"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@drawable/ic_inventory" />
 
-    <!-- Pregunta con altura ajustable -->
     <TextView
         android:id="@+id/inv_question"
         android:layout_width="wrap_content"
@@ -34,12 +32,6 @@
         android:textColor="@color/white"
         android:textSize="11sp"
         android:textStyle="bold" />
-
-    <!-- Ícono ojo con margen reducido -->
-
-    <!-- Balance más compacto -->
-
-    <!-- Título Inventory cerca del logo -->
 
     <ImageView
         android:id="@+id/inv_toggle_eye"
@@ -64,10 +56,6 @@
         android:textColor="@color/white"
         android:textSize="14sp"
         android:textStyle="bold" />
-
-    <!-- Texto Gestionar más cerca (menor marginStart) -->
-
-    <!-- Ícono gestionar compacto -->
 
     <TextView
         android:id="@+id/inv_title"

@@ -15,6 +15,8 @@ import com.example.miniproyecto1.databinding.FragmentHomeInventoryBinding
 import com.example.miniproyecto1.utils.SessionManager
 import com.example.miniproyecto1.view.adapter.InventoryAdapter
 import com.example.miniproyecto1.viewmodel.InventoryViewModel
+import com.example.miniproyecto1.widget.InventoryWidgetProvider
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,10 +24,7 @@ class HomeInventoryFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeInventoryBinding
     private val inventoryViewModel: InventoryViewModel by viewModels()
-
     private lateinit var sessionManager: SessionManager
-
-    // 🔹 Mantener un solo Adapter
     private lateinit var adapter: InventoryAdapter
 
     override fun onCreateView(
@@ -40,7 +39,6 @@ class HomeInventoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupRecyclerView()
         setupUI()
         observeViewModel()
@@ -53,35 +51,29 @@ class HomeInventoryFragment : Fragment() {
     }
 
     // -------------------------------
-    // 🔹 RECYCLERVIEW CONFIG
+    // RecyclerView
     // -------------------------------
     private fun setupRecyclerView() {
         adapter = InventoryAdapter(mutableListOf(), findNavController())
-
-        binding.recyclerviewInventory.layoutManager =
-            LinearLayoutManager(requireContext())
-
+        binding.recyclerviewInventory.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerviewInventory.adapter = adapter
     }
 
     // -------------------------------
-    // 🔹 OBSERVERS
+    // Observers
     // -------------------------------
     private fun observeViewModel() {
         inventoryViewModel.getListInventory()
-
         inventoryViewModel.listInventory.observe(viewLifecycleOwner) { list ->
             adapter.updateData(list)
-
         }
-
         inventoryViewModel.progressState.observe(viewLifecycleOwner) { state ->
             binding.progressLoading.isVisible = state
         }
     }
 
     // -------------------------------
-    // 🔹 UI BUTTONS
+    // UI Buttons
     // -------------------------------
     private fun setupUI() {
         binding.fabAgregar.setOnClickListener {
@@ -89,8 +81,16 @@ class HomeInventoryFragment : Fragment() {
         }
 
         binding.ivLogout.setOnClickListener {
+            // 1) Cerrar sesión de Firebase (clave para que el widget detecte que no hay usuario)
+            FirebaseAuth.getInstance().signOut()
+
+            // 2) Limpiar sesión local
             sessionManager.clearSession()
 
+            // 3) Limpiar visibilidad del widget y refrescar todos los widgets
+            InventoryWidgetProvider.clearAllVisibilityPrefs(requireContext())
+
+            // 4) Navegar a Login y limpiar el back stack
             findNavController().navigate(
                 R.id.action_homeInventoryFragment_to_loginFragment,
                 null,
@@ -102,7 +102,7 @@ class HomeInventoryFragment : Fragment() {
     }
 
     // -------------------------------
-    // 🔹 SESIÓN
+    // Sesión
     // -------------------------------
     private fun checkSession() {
         if (!sessionManager.isLoggedIn()) {
@@ -117,7 +117,7 @@ class HomeInventoryFragment : Fragment() {
     }
 
     // -------------------------------
-    // 🔹 BACK BUTTON (SALIR DE LA APP)
+    // Botón atrás -> salir de la app
     // -------------------------------
     private fun handleBackPressed() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {

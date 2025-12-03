@@ -1,6 +1,8 @@
 package com.example.miniproyecto1.view.fragment
 
+import android.appwidget.AppWidgetManager
 import android.os.Bundle
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +15,9 @@ import com.example.miniproyecto1.R
 import com.example.miniproyecto1.databinding.FragmentLoginBinding
 import com.example.miniproyecto1.model.auth.UserRequest
 import com.example.miniproyecto1.utils.SessionManager
+import com.example.miniproyecto1.view.MainActivity
 import com.example.miniproyecto1.viewmodel.LoginViewModel
+import com.example.miniproyecto1.widget.InventoryWidgetProvider
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,20 +39,17 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupListeners()
         observeViewModel()
     }
 
     private fun setupListeners() {
-        // 🔹 Validación tiempo real
         binding.etEmail.doOnTextChanged { _, _, _, _ ->
             loginViewModel.checkFieldsCompletion(
                 binding.etEmail.text.toString(),
                 binding.etPassword.text.toString()
             )
         }
-
         binding.etPassword.doOnTextChanged { text, _, _, _ ->
             val password = text.toString()
             loginViewModel.validatePassword(password)
@@ -57,62 +58,76 @@ class LoginFragment : Fragment() {
                 password
             )
         }
-
-        // 🔹 Botón Login
         binding.btnLogin.setOnClickListener {
             loginViewModel.loginUser(
                 binding.etEmail.text.toString(),
                 binding.etPassword.text.toString()
             )
         }
-
-        // 🔹 Registrarse
         binding.tvRegister.setOnClickListener {
             val email = binding.etEmail.text.toString()
             val pass = binding.etPassword.text.toString()
-
             val userRequest = UserRequest(email, pass)
             loginViewModel.registerUser(userRequest)
         }
     }
 
     private fun observeViewModel() {
-        // 🔹 Habilitar botones cuando campos completos y password válida
         loginViewModel.areFieldsComplete.observe(viewLifecycleOwner) { ready ->
             binding.btnLogin.isEnabled = ready
             binding.tvRegister.isEnabled = ready
         }
-
-        // 🔹 Validación contraseña tiempo real
         loginViewModel.isPasswordValid.observe(viewLifecycleOwner) { isValid ->
-            if (!isValid) {
-                binding.tilPassword.error = "Mínimo 6 dígitos"
-            } else {
-                binding.tilPassword.error = null
-            }
+            binding.tilPassword.error = if (!isValid) "Mínimo 6 dígitos" else null
         }
-
-        // 🔹 Progreso
         loginViewModel.progressState.observe(viewLifecycleOwner) { loading ->
             binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
         }
-
-        // 🔹 Resultado login / registro
         loginViewModel.authResult.observe(viewLifecycleOwner) { response ->
             if (response.isSuccessful) {
-                // Guardamos sesión y navegamos al home
                 sessionManager.saveLoginState(true)
-                findNavController().navigate(R.id.action_loginFragment_to_homeInventoryFragment)
+                handlePostLoginNavigation()
             } else {
                 Toast.makeText(requireContext(), response.message, Toast.LENGTH_SHORT).show()
             }
         }
     }
 
+    private fun handlePostLoginNavigation() {
+        val mainActivity = requireActivity() as? MainActivity
+        val fromWidget = mainActivity?.isFromWidget() ?: false
+        val widgetAction = mainActivity?.getWidgetAction()
+        val widgetId = mainActivity?.getWidgetId() ?: AppWidgetManager.INVALID_APPWIDGET_ID
+
+        if (fromWidget && widgetAction != null) {
+            when (widgetAction) {
+                "toggleBalance" -> {
+                    if (widgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                        val prefs = requireContext().getSharedPreferences(
+                            "inventory_widget_prefs",
+                            android.content.Context.MODE_PRIVATE
+                        )
+                        prefs.edit().putBoolean("visible_$widgetId", true).apply()
+                    }
+                    InventoryWidgetProvider.updateAllWidgets(requireContext())
+                    requireActivity().finish()
+                }
+                "manageInventory" -> {
+                    findNavController().navigate(R.id.action_loginFragment_to_homeInventoryFragment)
+                }
+                else -> {
+                    findNavController().navigate(R.id.action_loginFragment_to_homeInventoryFragment)
+                }
+            }
+        } else {
+            findNavController().navigate(R.id.action_loginFragment_to_homeInventoryFragment)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         if (sessionManager.isLoggedIn()) {
-            findNavController().navigate(R.id.action_loginFragment_to_homeInventoryFragment)
+            handlePostLoginNavigation()
         }
     }
 }
