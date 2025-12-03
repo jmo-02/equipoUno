@@ -9,11 +9,8 @@ import android.content.Intent
 import android.os.Build
 import android.widget.RemoteViews
 import com.example.miniproyecto1.R
-import com.example.miniproyecto1.data.InventoryDB
 import com.example.miniproyecto1.view.MainActivity
 import com.google.firebase.auth.FirebaseAuth
-import java.text.NumberFormat
-import java.util.Locale
 
 class InventoryWidgetProvider : AppWidgetProvider() {
 
@@ -39,7 +36,6 @@ class InventoryWidgetProvider : AppWidgetProvider() {
             }
         }
 
-        // Limpia todas las claves visible_$id (para logout)
         fun clearAllVisibilityPrefs(context: Context) {
             val p = prefs(context)
             p.edit().clear().apply()
@@ -49,7 +45,6 @@ class InventoryWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, manager: AppWidgetManager, appWidgetIds: IntArray) {
         appWidgetIds.forEach { id ->
-            // Inicializa preferencia en false si no existe
             val p = prefs(context)
             if (!p.contains("visible_$id")) {
                 p.edit().putBoolean("visible_$id", false).apply()
@@ -117,14 +112,13 @@ class InventoryWidgetProvider : AppWidgetProvider() {
         val user = FirebaseAuth.getInstance().currentUser
 
         if (user == null) {
-            // No logueado: SIEMPRE ocultar saldo e ícono ojo abierto
             views.setTextViewText(R.id.inv_balance, "$ ****")
             views.setImageViewResource(R.id.inv_toggle_eye, R.drawable.ic_eye_open)
         } else {
             val visible = isVisible(context, widgetId)
-            val total = calcularTotalInventario(context)
+            val cachedTotal = readCachedTotal(context) // lee el total formateado desde prefs
             if (visible) {
-                views.setTextViewText(R.id.inv_balance, "$ ${formatMoney(total)}")
+                views.setTextViewText(R.id.inv_balance, "$ $cachedTotal")
                 views.setImageViewResource(R.id.inv_toggle_eye, R.drawable.ic_eye_closed)
             } else {
                 views.setTextViewText(R.id.inv_balance, "$ ****")
@@ -150,24 +144,10 @@ class InventoryWidgetProvider : AppWidgetProvider() {
         manager.updateAppWidget(widgetId, views)
     }
 
-    private fun calcularTotalInventario(context: Context): Double {
-        return try {
-            val dao = InventoryDB.getDatabase(context.applicationContext).inventoryDao()
-            val items = dao.getAllItemsListSync()
-            items.fold(0.0) { acc, item -> acc + (item.price.toDouble() * item.quantity) }
-        } catch (e: Exception) {
-            0.0
-        }
-    }
-
-    private fun formatMoney(value: Double): String {
-        val locale = Locale("es", "ES")
-        val nf = NumberFormat.getNumberInstance(locale).apply {
-            minimumFractionDigits = 2
-            maximumFractionDigits = 2
-            isGroupingUsed = true
-        }
-        return nf.format(value)
+    private fun readCachedTotal(context: Context): String {
+        val prefs = context.getSharedPreferences("inventory_widget_cache", Context.MODE_PRIVATE)
+        // Si no hay cache, muestra 0,00 con el formato correcto para evitar 0 “feo”
+        return prefs.getString("total_formatted", "0,00") ?: "0,00"
     }
 
     private fun isVisible(context: Context, widgetId: Int): Boolean =
