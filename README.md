@@ -31,9 +31,9 @@ Aplicación <strong>Android profesional</strong> para <strong>gestión de invent
 
 **Institución:** Facultad de Ingeniería de Sistemas y Computación  
 **Curso:** Desarrollo de Aplicaciones para Dispositivos Móviles  
-**Miniproyecto:** 1 - Sprint 1  
+**Miniproyecto:** 2 - Sprint 2  
 **Docente:** Ing. Walter Medina  
-**Fecha:** Octubre 26 de 2025
+**Fecha:** Diciembre 3 2025
 
 </div>
 
