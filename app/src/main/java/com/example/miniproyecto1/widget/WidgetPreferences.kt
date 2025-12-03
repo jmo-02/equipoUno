@@ -17,3 +17,4 @@ object WidgetPreferences {
         return !current
     }
 }
+
